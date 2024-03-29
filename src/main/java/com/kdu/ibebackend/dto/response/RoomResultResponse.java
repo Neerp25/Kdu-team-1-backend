@@ -39,6 +39,8 @@ public class RoomResultResponse {
 
     private List<String> amenities;
 
+    private String description;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

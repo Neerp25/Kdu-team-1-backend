@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SESConfig {
     @Bean
-    public AmazonSimpleEmailService emailService() {
+    public AmazonSimpleEmailService awsEmailService() {
         return AmazonSimpleEmailServiceClientBuilder.standard()
                 .withRegion(Regions.AP_SOUTH_1).build();
     }

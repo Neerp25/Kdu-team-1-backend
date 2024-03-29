@@ -1,11 +1,13 @@
 package com.kdu.ibebackend.controller;
 
 import com.kdu.ibebackend.constants.Constants;
+import com.kdu.ibebackend.constants.EmailTemplate;
 import com.kdu.ibebackend.dto.request.RoomReviewDTO;
 import com.kdu.ibebackend.dto.request.SearchParamDTO;
 import com.kdu.ibebackend.dto.response.PromoCodeDTO;
 import com.kdu.ibebackend.exceptions.custom.InvalidPromoException;
 import com.kdu.ibebackend.service.DynamoDBService;
+import com.kdu.ibebackend.service.EmailService;
 import com.kdu.ibebackend.service.PromotionService;
 import com.kdu.ibebackend.service.RoomResultService;
 
@@ -26,18 +28,20 @@ public class RoomResultController {
     private RoomResultService roomResultService;
     private PromotionService promotionService;
     private DynamoDBService dynamoDBService;
+    private EmailService emailService;
 
     @Autowired
-    public RoomResultController(RoomResultService roomResultService, PromotionService promotionService, DynamoDBService dynamoDBService) {
+    public RoomResultController(RoomResultService roomResultService, PromotionService promotionService, DynamoDBService dynamoDBService, EmailService emailService) {
         this.roomResultService = roomResultService;
         this.promotionService = promotionService;
         this.dynamoDBService = dynamoDBService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/search")
     public ResponseEntity<Object> searchResults(@RequestBody @Valid SearchParamDTO searchParamDTO,
-                                                           @RequestParam(defaultValue = "0") @Min(0) @NotNull @Valid int page,
-                                                           @RequestParam(defaultValue = "10") @Min(1) @NotNull @Valid int size) {
+                                                @RequestParam(defaultValue = "0") @Min(0) @NotNull @Valid int page,
+                                                @RequestParam(defaultValue = "10") @Min(1) @NotNull @Valid int size) {
 
         return roomResultService.paginatedData(searchParamDTO, page, size);
     }
@@ -51,5 +55,11 @@ public class RoomResultController {
     public ResponseEntity<String> addRoomReview(@RequestBody @Valid RoomReviewDTO roomReviewDTO) {
         dynamoDBService.saveRoomReview(roomReviewDTO);
         return new ResponseEntity<>(Constants.DYNAMODB_SUCCESS, HttpStatus.OK);
+    }
+
+    @GetMapping("/sendEmail")
+    public ResponseEntity<String> sendEmail() {
+        emailService.sendEmail("asish.mahapatra@kickdrumtech.com", "Test Email", EmailTemplate.EMAIL_TEMPLATE);
+        return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
     }
 }

@@ -41,23 +41,23 @@ public class CurrencyAPIService {
      */
     @Cacheable("exchangerates")
     public ResponseEntity<CurrencyAPIResponse> executePostRequest() throws JsonProcessingException {
-        if(Objects.equals(env.getProperty("spring.profiles.active"), "dev")) {
+//        if(Objects.equals(env.getProperty("spring.profiles.active"), "dev")) {
             ObjectMapper mapper = new ObjectMapper();
             CurrencyAPIResponse response = mapper.readValue(env.getProperty("exhangerates"), CurrencyAPIResponse.class);
             log.info(response.toString());
             return ResponseEntity.ok(response);
-        }
+//        }
 
-        CurrencyAPIResponse response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/v1/latest")
-                        .queryParam("apikey", secretConfig.getCurrencyApiKey())
-                        .build())
-                .retrieve()
-                .bodyToMono(CurrencyAPIResponse.class)
-                .block();
-
-        return ResponseEntity.ok(response);
+//        CurrencyAPIResponse response = webClient.get()
+//                .uri(uriBuilder -> uriBuilder
+//                        .path("/v1/latest")
+//                        .queryParam("apikey", secretConfig.getCurrencyApiKey())
+//                        .build())
+//                .retrieve()
+//                .bodyToMono(CurrencyAPIResponse.class)
+//                .block();
+//
+//        return ResponseEntity.ok(response);
     }
 
     /**

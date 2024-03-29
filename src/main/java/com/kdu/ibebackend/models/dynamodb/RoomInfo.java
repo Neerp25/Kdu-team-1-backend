@@ -27,4 +27,7 @@ public class RoomInfo {
 
     @DynamoDBAttribute(attributeName = "room_reviews")
     private Integer roomReviews;
+
+    @DynamoDBAttribute(attributeName = "description")
+    private String description;
 }

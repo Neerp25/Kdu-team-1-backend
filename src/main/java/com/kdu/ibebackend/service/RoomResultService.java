@@ -116,6 +116,7 @@ public class RoomResultService {
             roomResultResponse.setLowResImages(roomInfoList.get(roomTypeId - 1).getLowResImages());
             roomResultResponse.setValidPromotions(RoomUtils.findValidPromos(promotions, searchParamDTO));
             roomResultResponse.setAmenities(roomInfoList.get(roomTypeId - 1).getAmenities());
+            roomResultResponse.setDescription(roomInfoList.get(roomTypeId - 1).getDescription());
 
             finalResponseMap.put(roomTypeId, roomResultResponse);
         }
