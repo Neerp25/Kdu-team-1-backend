@@ -1,6 +1,8 @@
 package com.kdu.ibebackend.constants;
 
 public class EmailTemplate {
+    public static String EMAIL_SUCCESS = "Email sent successfully";
+    public static String EMAIL_SUBJECT = "We value your feedback";
     public static String EMAIL_TEMPLATE = """
             <!DOCTYPE html>
             <html lang="en">
@@ -63,5 +65,5 @@ public class EmailTemplate {
 
             </body>
             </html>
-            """.formatted(Constants.FORM_LINK);
+            """;
 }

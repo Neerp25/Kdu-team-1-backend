@@ -11,6 +11,7 @@ public class PromoCodeMapper {
         promoCodeDTO.setPromoTitle(promoCode.getPromoTitle());
         promoCodeDTO.setPromoDescription(promoCode.getPromoDesc());
         promoCodeDTO.setPriceFactor(promoCode.getPriceFactor());
+        promoCodeDTO.setRoomTypeId(promoCode.getRoomTypeId());
 
         return promoCodeDTO;
     }

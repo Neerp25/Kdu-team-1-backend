@@ -96,6 +96,7 @@ public class RoomResultService {
 
         List<PromotionType> promotions = promotionService.fetchPromotions();
         List<RoomInfo> roomInfoList = RoomUtils.findRoomInfo(dynamoDBService);
+        log.info(roomInfoList.toString());
 
         HashMap<Integer, RoomResultResponse> finalResponseMap = new HashMap<>();
         for (Integer roomTypeId : validRoomTypeIds) {
@@ -109,8 +110,8 @@ public class RoomResultService {
             roomResultResponse.setRoomTypeName(roomType.getRoomTypeName());
             roomResultResponse.setAverageRate(roomTypeAverageRate.getOrDefault(roomTypeId, 0.0));
             roomResultResponse.setRoomTypeId(roomType.getRoomTypeId());
-            roomResultResponse.setBestPromotion(RoomUtils.findMinPromo(promotions, roomResultResponse, searchParamDTO));
-            roomResultResponse.setReviews(new ArrayList<>());
+            roomResultResponse.setBestPromotion(RoomUtils.findMinPromo(RoomUtils.findValidPromos(promotions, searchParamDTO), roomResultResponse, searchParamDTO));
+            roomResultResponse.setReviews(roomInfoList.get(roomTypeId - 1).getRoomReviews());
             roomResultResponse.setRating(roomInfoList.get(roomTypeId - 1).getRoomRating());
             roomResultResponse.setHighResImages(roomInfoList.get(roomTypeId - 1).getHighResImages());
             roomResultResponse.setLowResImages(roomInfoList.get(roomTypeId - 1).getLowResImages());

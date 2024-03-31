@@ -27,7 +27,7 @@ public class RoomResultResponse {
 
     private Double rating;
 
-    private List<String> reviews;
+    private Integer reviews;
 
     private List<String> highResImages;
 

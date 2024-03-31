@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+
 /**
  * Service Layer for interacting with DynamoDB
  */
@@ -35,13 +37,27 @@ public class DynamoDBService {
         }
     }
 
-    public RoomInfo fetchRoomInfo(Number roomTypeId) throws JsonProcessingException {
+    public RoomInfo fetchRoomInfo(Number roomTypeId) {
             RoomInfo roomInfo = dynamoRepository.getRoomInfo(roomTypeId);
             return roomInfo;
     }
 
     public void saveRoomReview(RoomReviewDTO roomReviewDTO) {
+        DecimalFormat df = new DecimalFormat("#.##");
         RoomReview roomReview = RoomReviewMapper.dtoToEntity(roomReviewDTO);
+        RoomInfo roomInfo = dynamoRepository.getRoomInfo(roomReview.getRoomTypeId());
+
+        Double newRating = (roomInfo.getRoomRating() + roomReview.getRating())/(roomInfo.getRoomReviews() + 1);
+        Double formattedRating = Double.parseDouble(df.format(newRating));
+
+        roomInfo.setRoomRating(formattedRating);
+        roomInfo.setRoomReviews(roomInfo.getRoomReviews() + 1);
+
+        dynamoRepository.updateRoomInfo(roomInfo);
         dynamoRepository.saveRoomReview(roomReview);
+    }
+
+    public boolean checkReview(String email) {
+        return dynamoRepository.findRoomReview(email);
     }
 }
