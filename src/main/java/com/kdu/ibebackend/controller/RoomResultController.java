@@ -1,23 +1,19 @@
 package com.kdu.ibebackend.controller;
 
-import com.kdu.ibebackend.constants.Constants;
-import com.kdu.ibebackend.constants.EmailTemplate;
 import com.kdu.ibebackend.dto.request.RoomReviewDTO;
 import com.kdu.ibebackend.dto.request.SearchParamDTO;
 import com.kdu.ibebackend.dto.response.PromoCodeDTO;
 import com.kdu.ibebackend.exceptions.custom.InvalidPromoException;
-import com.kdu.ibebackend.service.DynamoDBService;
-import com.kdu.ibebackend.service.EmailService;
-import com.kdu.ibebackend.service.PromotionService;
-import com.kdu.ibebackend.service.RoomResultService;
+import com.kdu.ibebackend.service.*;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,15 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class RoomResultController {
     private RoomResultService roomResultService;
     private PromotionService promotionService;
-    private DynamoDBService dynamoDBService;
-    private EmailService emailService;
-
+    private RoomReviewService roomReviewService;
     @Autowired
-    public RoomResultController(RoomResultService roomResultService, PromotionService promotionService, DynamoDBService dynamoDBService, EmailService emailService) {
+    public RoomResultController(RoomResultService roomResultService, PromotionService promotionService, RoomReviewService roomReviewService) {
         this.roomResultService = roomResultService;
         this.promotionService = promotionService;
-        this.dynamoDBService = dynamoDBService;
-        this.emailService = emailService;
+        this.roomReviewService = roomReviewService;
     }
 
     @PostMapping("/search")
@@ -47,19 +40,17 @@ public class RoomResultController {
     }
 
     @GetMapping("/promotion")
-    public ResponseEntity<PromoCodeDTO> promoCode(@RequestParam @NotNull @Valid String promoCode, @RequestParam @NotNull @Valid Integer roomTypeId) throws InvalidPromoException {
+    public ResponseEntity<PromoCodeDTO> promoCode(@RequestParam @NotNull @Valid String promoCode, @RequestParam @NotNull @Min(1) @Max(6) Integer roomTypeId) throws InvalidPromoException {
         return promotionService.validatePromoCode(promoCode, roomTypeId);
     }
 
     @PostMapping("/review")
     public ResponseEntity<String> addRoomReview(@RequestBody @Valid RoomReviewDTO roomReviewDTO) {
-        dynamoDBService.saveRoomReview(roomReviewDTO);
-        return new ResponseEntity<>(Constants.DYNAMODB_SUCCESS, HttpStatus.OK);
+        return  roomReviewService.addRoomReview(roomReviewDTO);
     }
 
     @GetMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail() {
-        emailService.sendEmail("asish.mahapatra@kickdrumtech.com", "Test Email", EmailTemplate.EMAIL_TEMPLATE);
-        return new ResponseEntity<>("Email sent successfully", HttpStatus.OK);
+    public ResponseEntity<String> sendEmail(@RequestParam @NotNull @Email String email, @RequestParam @NotNull @Min(1) @Max(6) Integer roomTypeId) {
+        return roomReviewService.sendEmail(email, roomTypeId);
     }
 }

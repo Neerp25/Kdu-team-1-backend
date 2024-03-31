@@ -178,12 +178,11 @@ public class RoomUtils {
     }
 
     /**
-     * Caching room info to prevent repeated unnecessary calls to DynamoDB
+     * Function to find info of all room types.
      * @param dynamoDBService
-     * @return
+     * @return List of room types alongwith their info
      * @throws JsonProcessingException
      */
-    @Cacheable("roominfo")
     public static List<RoomInfo> findRoomInfo(DynamoDBService dynamoDBService) throws JsonProcessingException {
         List<RoomInfo> roomInfos = new ArrayList<>();
 
