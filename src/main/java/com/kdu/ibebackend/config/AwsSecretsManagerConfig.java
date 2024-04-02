@@ -5,9 +5,12 @@ import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.secretsmanager.caching.SecretCache;
 import com.amazonaws.secretsmanager.caching.SecretCacheConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,6 +18,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 public class AwsSecretsManagerConfig {
+    private Environment env;
+
+    @Autowired
+    public AwsSecretsManagerConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public AWSSecretsManager awsSecretsManager() {
@@ -28,7 +37,7 @@ public class AwsSecretsManagerConfig {
     public SecretCache secretCache(AWSSecretsManager awsSecretsManager) {
         SecretCacheConfiguration cacheConfig = new SecretCacheConfiguration()
                 .withMaxCacheSize(10)
-                .withCacheItemTTL(TimeUnit.MINUTES.toMillis(60))
+                .withCacheItemTTL(TimeUnit.MINUTES.toMillis(Integer.parseInt(Objects.requireNonNull(env.getProperty("cache.ttl")))))
                 .withClient(awsSecretsManager);
         return new SecretCache(cacheConfig);
     }

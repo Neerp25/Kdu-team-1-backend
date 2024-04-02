@@ -6,18 +6,28 @@ import com.kdu.ibebackend.security.ApiKeyAuthentication;
 import com.kdu.ibebackend.utils.AuthUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.stereotype.Service;
 
 @Slf4j
+@Service
 public class AuthenticationService {
     private static final String AUTH_TOKEN_HEADER_NAME = AuthConstants.AUTH_TOKEN_HEADER;
 
-    private static String AUTH_TOKEN = AuthConstants.AUTH_TOKEN;
+    private static Environment env;
+
+    @Autowired
+    public AuthenticationService(Environment env) {
+        AuthenticationService.env = env;
+    }
 
     public static Authentication getAuthentication(HttpServletRequest request) {
         String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
+        String AUTH_TOKEN = env.getProperty("auth.token");
         if (apiKey == null || !apiKey.equals(AUTH_TOKEN)) {
             if (AuthUtils.validateSwaggerDocsPath(request.getRequestURI())) {
                 return new ApiKeyAuthentication(AUTH_TOKEN, AuthorityUtils.NO_AUTHORITIES);

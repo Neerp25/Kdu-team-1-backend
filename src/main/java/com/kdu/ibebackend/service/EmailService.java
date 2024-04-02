@@ -2,15 +2,18 @@ package com.kdu.ibebackend.service;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
     private final AmazonSimpleEmailService amazonSESClient;
+    private Environment env;
 
-    public EmailService(AmazonSimpleEmailService awsEmailService) {
+    public EmailService(AmazonSimpleEmailService awsEmailService, Environment env) {
         this.amazonSESClient = awsEmailService;
+        this.env = env;
     }
 
     public void sendEmail(String to, String subject, String body) {
@@ -21,7 +24,7 @@ public class EmailService {
         Message message = new Message().withSubject(subjectContent).withBody(emailBody);
         SendEmailRequest request = new SendEmailRequest().withDestination(destination)
                 .withMessage(message)
-                .withSource("asish.mahapatra@kickdrumtech.com");
+                .withSource(env.getProperty("email.source"));
 
         SendEmailResult result = amazonSESClient.sendEmail(request);
     }
