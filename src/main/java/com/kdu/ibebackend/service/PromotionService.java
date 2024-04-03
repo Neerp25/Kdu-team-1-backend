@@ -1,7 +1,7 @@
 package com.kdu.ibebackend.service;
 
-import com.kdu.ibebackend.constants.GraphQLQueries;
 import com.kdu.ibebackend.constants.ValidationConstants;
+import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
 import com.kdu.ibebackend.dto.graphql.ListPromotions;
 import com.kdu.ibebackend.dto.mappers.PromoCodeMapper;
 import com.kdu.ibebackend.dto.response.PromoCodeDTO;
@@ -9,6 +9,7 @@ import com.kdu.ibebackend.entities.PromoCode;
 import com.kdu.ibebackend.exceptions.custom.InvalidPromoException;
 import com.kdu.ibebackend.models.PromotionType;
 import com.kdu.ibebackend.repository.PromoCodeRepository;
+import com.kdu.ibebackend.utils.GraphUtils;
 import com.kdu.ibebackend.utils.PromoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class PromotionService {
 
     @Cacheable("promotions")
     public List<PromotionType> fetchPromotions() {
-        ListPromotions data = graphQLService.executePostRequest(GraphQLQueries.promotionQuery, ListPromotions.class).getBody();
+        String formattedQuery = GraphUtils.convertToGraphQLRequest(GraphQLFetch.promotionQuery);
+        ListPromotions data = graphQLService.executePostRequest(formattedQuery, ListPromotions.class).getBody();
         return data.getRes().getPromotionTypeList();
     }
 

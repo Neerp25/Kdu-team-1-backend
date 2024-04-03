@@ -2,7 +2,7 @@ package com.kdu.ibebackend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kdu.ibebackend.constants.Errors;
-import com.kdu.ibebackend.constants.GraphQLQueries;
+import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
 import com.kdu.ibebackend.dto.graphql.ListRoomAvailabilities;
 import com.kdu.ibebackend.dto.graphql.ListRoomRateRoomTypeMappings;
 import com.kdu.ibebackend.dto.request.SearchParamDTO;
@@ -30,9 +30,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class RoomResultService {
-    private GraphQLService graphQLService;
-    private DynamoDBService dynamoDBService;
-    private PromotionService promotionService;
+    private final GraphQLService graphQLService;
+    private final DynamoDBService dynamoDBService;
+    private final PromotionService promotionService;
 
     private HashMap<Integer, RoomType> roomTypeDetails = new HashMap<>();
 
@@ -125,13 +125,13 @@ public class RoomResultService {
         return finalResponseMap;
     }
 
-    public List<Integer> roomTypeCount(SearchParamDTO searchParamDTO) {
-        String query = GraphQLQueries.roomRes;
+    public List<Integer> roomTypeCount(SearchParamDTO searchParamDTO) throws JsonProcessingException {
+        String query = GraphQLFetch.roomRes;
         String injectedQuery = GraphUtils.injectSearchParamsQuery(query, searchParamDTO.getStartDate(), searchParamDTO.getEndDate(), String.valueOf(searchParamDTO.getPropertyId()));
         ListRoomAvailabilities res = graphQLService.executePostRequest(injectedQuery, ListRoomAvailabilities.class).getBody();
 
         HashMap<Integer, HashMap<String, Integer>> roomTypeCountMap = new HashMap<>();
-
+        log.info(res.toString());
         for (RoomData room : res.getRes().getRoomData()) {
             int roomTypeId = room.getRoom().getRoomTypeId();
             String date = room.getDate();
@@ -170,8 +170,8 @@ public class RoomResultService {
         return filteredRoomTypeIds;
     }
 
-    public HashMap<Integer, HashMap<String, Double>> roomRateType(SearchParamDTO searchParamDTO) {
-        String query = GraphQLQueries.roomRateRoomTypeMappings;
+    public HashMap<Integer, HashMap<String, Double>> roomRateType(SearchParamDTO searchParamDTO) throws JsonProcessingException {
+        String query = GraphQLFetch.roomRateRoomTypeMappings;
         String injectedQuery = GraphUtils.injectSearchParamsQuery(query, searchParamDTO.getStartDate(), searchParamDTO.getEndDate(), String.valueOf(searchParamDTO.getPropertyId()));
         ListRoomRateRoomTypeMappings res = graphQLService.executePostRequest(injectedQuery, ListRoomRateRoomTypeMappings.class).getBody();
 

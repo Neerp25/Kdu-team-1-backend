@@ -29,13 +29,12 @@ public class GraphQLService {
     }
 
     public <T> ResponseEntity<T> executePostRequest(String graphqlQuery, Class<T> responseClass) {
-        String formattedQuery = GraphUtils.convertToGraphQLRequest(graphqlQuery);
 
         T response = webClient.post()
                 .uri("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-Api-Key", secretConfig.getGraphqlApiKey())
-                .bodyValue(formattedQuery)
+                .bodyValue(graphqlQuery)
                 .retrieve()
                 .bodyToMono(responseClass)
                 .block();

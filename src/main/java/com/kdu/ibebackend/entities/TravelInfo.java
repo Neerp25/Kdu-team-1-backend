@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Table to store travel info of the user
+ */
 @Getter
 @Setter
 @Entity
@@ -20,5 +23,9 @@ public class TravelInfo {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name ="phone_number", nullable = false)
+    private String phoneNumber;
 
+    @Column(name = "email", nullable = false)
+    private String email;
 }

@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.kdu.ibebackend.constants.Errors;
-import com.kdu.ibebackend.constants.GraphQLQueries;
+import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
 import com.kdu.ibebackend.dto.MinRates;
+import com.kdu.ibebackend.utils.GraphUtils;
 import com.kdu.ibebackend.utils.ResponseParser;
 import com.kdu.ibebackend.models.RoomRate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,13 @@ public class PropertyService {
     @Autowired
     private GraphQLService graphQLService;
 
-    private static final String QUERY = GraphQLQueries.basicNightlyRates;
+    private static final String QUERY = GraphQLFetch.basicNightlyRates;
 
     public ResponseEntity<String> executeGraphQLQuery() throws IOException {
         HttpHeaders headers = new HttpHeaders();
 
-        ResponseEntity<String> responseEntity = graphQLService.executePostRequest(QUERY, String.class);
+        String formattedQuery = GraphUtils.convertToGraphQLRequest(QUERY);
+        ResponseEntity<String> responseEntity = graphQLService.executePostRequest(formattedQuery, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());

@@ -1,17 +1,23 @@
 package com.kdu.ibebackend.controller;
 
 import com.kdu.ibebackend.constants.Constants;
-import com.kdu.ibebackend.constants.GraphQLQueries;
+import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
+import com.kdu.ibebackend.constants.graphql.GraphQLMutations;
+import com.kdu.ibebackend.dto.GraphQLMutationResponse;
+import com.kdu.ibebackend.dto.GraphQLMutationVariables;
 import com.kdu.ibebackend.dto.GraphQLResponse;
 import com.kdu.ibebackend.service.GraphQLService;
 
+import com.kdu.ibebackend.utils.GraphUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin("*")
+@Slf4j
 public class TestController {
     private final GraphQLService graphQLService;
 
@@ -42,7 +49,29 @@ public class TestController {
 
     @GetMapping("/api/graphql")
     public ResponseEntity<GraphQLResponse> testGraphQL() {
-        String graphqlQuery = GraphQLQueries.testQuery;
+        String graphqlQuery = GraphUtils.convertToGraphQLRequest(GraphQLFetch.testQuery);
         return graphQLService.executePostRequest(graphqlQuery, GraphQLResponse.class);
+    }
+
+    /**
+     * A test endpoint to look at multi-threading and concurrent mutations in GraphQL and PostgresSQL
+     * @param name
+     * @return
+     */
+    @GetMapping("/concurrency_test")
+    public ResponseEntity<GraphQLMutationResponse> testMutation(@RequestParam String name) {
+        GraphQLMutationVariables graphQLMutationVariables = new GraphQLMutationVariables();
+        graphQLMutationVariables.setGuestName(name);
+
+        String graphQLMutation = GraphUtils.convertToVariableGraphQLRequest(GraphQLMutations.dummyMutation, graphQLMutationVariables);
+
+        log.info(Thread.currentThread().getName());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return graphQLService.executePostRequest(graphQLMutation, GraphQLMutationResponse.class);
     }
 }

@@ -1,7 +1,7 @@
 package com.kdu.ibebackend.controller;
 
 import com.kdu.ibebackend.constants.AuthConstants;
-import com.kdu.ibebackend.constants.GraphQLQueries;
+import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
 import com.kdu.ibebackend.dto.graphql.ListProperties;
 import com.kdu.ibebackend.models.Property;
 import com.kdu.ibebackend.service.GraphQLService;
@@ -69,7 +69,7 @@ public class LandingPageControllerTest {
         fetchProperties.setRes(propRes);
         ResponseEntity<ListProperties> res = new ResponseEntity<>(fetchProperties, HttpStatus.OK);
 
-        given(graphQLService.executePostRequest(GraphQLQueries.fetchProperties, ListProperties.class)).willReturn(res);
+        given(graphQLService.executePostRequest(GraphQLFetch.fetchProperties, ListProperties.class)).willReturn(res);
 
         mockMvc.perform(get("/api/v1/landingpage/properties")
                         .contentType(MediaType.APPLICATION_JSON)
