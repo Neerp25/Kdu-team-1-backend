@@ -20,9 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service to fetch data for the room details page
@@ -93,6 +91,7 @@ public class RoomResultService {
         List<Integer> validRoomTypeIds = roomTypeCount(searchParamDTO);
         HashMap<Integer, HashMap<String, Double>> roomRateType = roomRateType(searchParamDTO);
         HashMap<Integer, Double> roomTypeAverageRate = RoomUtils.calculateAverageRate(roomRateType, searchParamDTO.getStartDate(), searchParamDTO.getEndDate());
+        HashMap<Integer, List<Double>> roomRateRange = RoomUtils.getAllRates(roomRateType, searchParamDTO.getStartDate(), searchParamDTO.getEndDate());
 
         List<PromotionType> promotions = promotionService.fetchPromotions();
         List<RoomInfo> roomInfoList = RoomUtils.findRoomInfo(dynamoDBService);
@@ -118,6 +117,7 @@ public class RoomResultService {
             roomResultResponse.setValidPromotions(RoomUtils.findValidPromos(promotions, searchParamDTO));
             roomResultResponse.setAmenities(roomInfoList.get(roomTypeId - 1).getAmenities());
             roomResultResponse.setDescription(roomInfoList.get(roomTypeId - 1).getDescription());
+            roomResultResponse.setRates(roomRateRange.get(roomTypeId));
 
             finalResponseMap.put(roomTypeId, roomResultResponse);
         }
@@ -125,7 +125,7 @@ public class RoomResultService {
         return finalResponseMap;
     }
 
-    public List<Integer> roomTypeCount(SearchParamDTO searchParamDTO) throws JsonProcessingException {
+    public List<Integer> roomTypeCount(SearchParamDTO searchParamDTO) {
         String query = GraphQLFetch.roomRes;
         String injectedQuery = GraphUtils.injectSearchParamsQuery(query, searchParamDTO.getStartDate(), searchParamDTO.getEndDate(), String.valueOf(searchParamDTO.getPropertyId()));
         ListRoomAvailabilities res = graphQLService.executePostRequest(injectedQuery, ListRoomAvailabilities.class).getBody();
@@ -152,6 +152,20 @@ public class RoomResultService {
                 roomTypeCountMap.putIfAbsent(roomTypeId, new HashMap<>());
                 HashMap<String, Integer> dateCountMap = roomTypeCountMap.get(roomTypeId);
                 dateCountMap.put(date, dateCountMap.getOrDefault(date, 0) + 1);
+            }
+        }
+
+        for (HashMap.Entry<Integer, HashMap<String, Integer>> entry : roomTypeCountMap.entrySet()) {
+            HashMap<String, Integer> dateCountMap = entry.getValue();
+            Iterator<HashMap.Entry<String, Integer>> iterator = dateCountMap.entrySet().iterator();
+
+            while (iterator.hasNext()) {
+                Map.Entry<String, Integer> dateCountEntry = iterator.next();
+                int count = dateCountEntry.getValue();
+
+                if (count < searchParamDTO.getRooms()) {
+                    iterator.remove();
+                }
             }
         }
 

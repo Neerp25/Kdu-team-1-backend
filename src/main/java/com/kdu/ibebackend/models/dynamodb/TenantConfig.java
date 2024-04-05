@@ -40,6 +40,15 @@ public class TenantConfig {
     @DynamoDBAttribute(attributeName = "sort_options")
     private List<String> sortOptions;
 
+    @DynamoDBAttribute(attributeName = "vat")
+    private double vat;
+
+    @DynamoDBAttribute(attributeName = "taxes")
+    private double taxes;
+
+    @DynamoDBAttribute(attributeName = "due_percent")
+    private double duePercent;
+
     private Guests guests;
 
     @DynamoDBDocument

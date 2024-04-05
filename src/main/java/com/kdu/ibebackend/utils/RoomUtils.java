@@ -46,6 +46,31 @@ public class RoomUtils {
         return averageRateMap;
     }
 
+    public static HashMap<Integer, List<Double>> getAllRates(HashMap<Integer, HashMap<String, Double>> roomTypeRateMap, String startDate, String endDate) {
+        HashMap<Integer, List<Double>> allRatesMap = new HashMap<>();
+
+        for (HashMap.Entry<Integer, HashMap<String, Double>> entry : roomTypeRateMap.entrySet()) {
+            int roomTypeId = entry.getKey();
+            HashMap<String, Double> dateRateMap = entry.getValue();
+            List<Double> allRates = new ArrayList<>();
+
+            for (HashMap.Entry<String, Double> rateEntry : dateRateMap.entrySet()) {
+                String date = rateEntry.getKey();
+                double rate = rateEntry.getValue();
+
+                if (date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0) {
+                    allRates.add(rate);
+                }
+            }
+
+            if (!allRates.isEmpty()) {
+                allRatesMap.put(roomTypeId, allRates);
+            }
+        }
+
+        return allRatesMap;
+    }
+
     public static boolean checkGuestMaxCapacity(Integer totalGuests, Integer rooms, Integer maxCap) {
         Double ceilValue = Math.ceil((double) totalGuests / rooms);
         return maxCap >= ceilValue;

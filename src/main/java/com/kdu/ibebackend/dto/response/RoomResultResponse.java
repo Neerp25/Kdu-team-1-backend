@@ -41,6 +41,8 @@ public class RoomResultResponse {
 
     private String description;
 
+    private List<Double> rates;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
