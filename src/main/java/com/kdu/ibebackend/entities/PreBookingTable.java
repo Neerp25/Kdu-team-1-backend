@@ -10,17 +10,17 @@ import lombok.Setter;
 import java.sql.Date;
 
 /**
- * Mock Table for booking which we will be using for handling concurrency.
- * Will implement locking on this one and successful bookings that have been written on this table will be created
+ * Pre Booking Table which we will be using for handling concurrency.
+ * Will implement locks and constraints on this one and successful bookings that have been written on this table will be created
  * in GraphQL by running the Mutation Queries
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "concurrent_table")
-public class ConcurrentTable {
+@Table(name = "pre_booking_table")
+public class PreBookingTable {
     @Id
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "availability_id", nullable = false)
     private Integer roomId;
 
     @Column(name = "start_date", nullable = false)

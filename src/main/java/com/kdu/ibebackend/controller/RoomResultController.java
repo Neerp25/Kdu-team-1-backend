@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping(path = "/api/v1/roomresult")
-public class RoomResultController {
+public class
+RoomResultController {
     private RoomResultService roomResultService;
     private PromotionService promotionService;
     private RoomReviewService roomReviewService;

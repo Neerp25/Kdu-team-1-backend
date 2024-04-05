@@ -28,4 +28,14 @@ public class EmailService {
 
         SendEmailResult result = amazonSESClient.sendEmail(request);
     }
+
+    public void sendTemplatedEmail(String templateName, String recipientEmail, String templateData) {
+        SendTemplatedEmailRequest emailRequest = new SendTemplatedEmailRequest()
+                .withDestination(new Destination().withToAddresses(recipientEmail))
+                .withSource(env.getProperty("email.source"))
+                .withTemplate(templateName)
+                .withTemplateData(templateData);
+
+        amazonSESClient.sendTemplatedEmail(emailRequest);
+    }
 }

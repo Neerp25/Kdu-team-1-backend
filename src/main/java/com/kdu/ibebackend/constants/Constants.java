@@ -5,4 +5,6 @@ public class Constants {
     public static String DYNAMODB_SUCCESS = "Thank you for your feedback";
     public static String FORM_LINK = "http://localhost:5173/feedback";
     public static String ROOM_REVIEW_SECONDARY_INDEX = "user_email-index";
+
+    public static String OTP_SUCCESS = "OTP Verified";
 }

@@ -4,9 +4,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdu.ibebackend.constants.Constants;
+import com.kdu.ibebackend.models.dynamodb.OtpEntry;
 import com.kdu.ibebackend.models.dynamodb.RoomInfo;
 import com.kdu.ibebackend.models.dynamodb.RoomReview;
 import com.kdu.ibebackend.models.dynamodb.TenantConfig;
@@ -72,4 +75,13 @@ public class DynamoRepository {
 
         return !reviews.isEmpty();
     }
+
+    public void saveOtpEntry(OtpEntry otpEntry) {
+        dynamoDBMapper.save(otpEntry);
+    }
+
+    public OtpEntry getOtpEntry(String email) {
+        return dynamoDBMapper.load(OtpEntry.class, email);
+    }
+
 }
