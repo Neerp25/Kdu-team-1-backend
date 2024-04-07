@@ -1,9 +1,11 @@
 package com.kdu.ibebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties
 public class PromotionType {
     @JsonProperty("promotion_description")
     private String promotionDescription;

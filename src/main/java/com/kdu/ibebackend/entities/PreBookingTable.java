@@ -20,7 +20,7 @@ import java.sql.Date;
 @Table(name = "pre_booking_table")
 public class PreBookingTable {
     @Id
-    @Column(name = "availability_id", nullable = false)
+    @Column(name = "room_id", nullable = false)
     private Integer roomId;
 
     @Column(name = "start_date", nullable = false)

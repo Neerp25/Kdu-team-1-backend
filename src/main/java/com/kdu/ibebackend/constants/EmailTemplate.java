@@ -2,6 +2,7 @@ package com.kdu.ibebackend.constants;
 
 public class EmailTemplate {
     public static String OTP_TEMPLATE_NAME = "OTPTemplate";
+    public static String BOOKING_TEMPLATE_NAME = "BookingConfirmationTemplate";
     public static String EMAIL_SUCCESS = "Email sent successfully";
     public static String EMAIL_SUBJECT = "We value your feedback";
     public static String EMAIL_TEMPLATE = """

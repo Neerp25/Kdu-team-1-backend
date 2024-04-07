@@ -20,6 +20,4 @@ public class OtpUtils {
     public static String otpEmailTemplateGenerator(String otp) {
         return "{ \"otp\": \"" + otp + "\" }";
     }
-
-//    "{ \"name\":\"Alejandro\", \"favoriteanimal\": \"alligator\" }"
 }

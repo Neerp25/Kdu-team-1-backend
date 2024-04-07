@@ -49,6 +49,12 @@ public class TenantConfig {
     @DynamoDBAttribute(attributeName = "due_percent")
     private double duePercent;
 
+    @DynamoDBAttribute(attributeName = "resort_fee")
+    private double resortFee;
+
+    @DynamoDBAttribute(attributeName = "occupancy_tax")
+    private double occupancyTax;
+
     private Guests guests;
 
     @DynamoDBDocument

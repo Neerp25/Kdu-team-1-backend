@@ -2,7 +2,8 @@ package com.kdu.ibebackend.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.kdu.ibebackend.dto.graphql.variables.RoomAvailabilityVariables;
+import com.kdu.ibebackend.dto.graphql.variables.*;
+import com.kdu.ibebackend.dto.request.BookingDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,5 +50,50 @@ public class GraphUtils {
         roomAvailabilityVariables.setEndDate(endDate);
 
         return convertToVariableGraphQLRequest(query, roomAvailabilityVariables);
+    }
+
+    public static String injectRoomAvailabilityIdQuery(String query, String startDate, String endDate, Integer roomTypeId) {
+        RoomAvailabilityIdVariables roomAvailabilityIdVariables = new RoomAvailabilityIdVariables();
+        roomAvailabilityIdVariables.setRoomTypeId(roomTypeId);
+        roomAvailabilityIdVariables.setStartDate(startDate);
+        roomAvailabilityIdVariables.setEndDate(endDate);
+
+        return convertToVariableGraphQLRequest(query, roomAvailabilityIdVariables);
+    }
+
+    public static String injectGuestMutationQuery(String query, String guestName) {
+        GuestMutationVariables guestMutationVariables = new GuestMutationVariables();
+        guestMutationVariables.setGuestName(guestName);
+
+        return convertToVariableGraphQLRequest(query, guestMutationVariables);
+    }
+
+    public static String injectCreateBookingQuery(String query, BookingDTO bookingDTO, Integer guestId) {
+        CreateBookingVariables createBookingVariables = new CreateBookingVariables();
+        createBookingVariables.setAdultCount(bookingDTO.getBookingInfoDTO().getAdultCount());
+        createBookingVariables.setCheckInDate(bookingDTO.getBookingInfoDTO().getCheckInDate());
+        createBookingVariables.setCheckOutDate(bookingDTO.getBookingInfoDTO().getCheckOutDate());
+        createBookingVariables.setGuestId(guestId);
+        createBookingVariables.setPromotionId(bookingDTO.getBookingInfoDTO().getPromotionId());
+        createBookingVariables.setAmountDueResort(bookingDTO.getBookingInfoDTO().getAmountDueResort().intValue());
+        createBookingVariables.setTotalCost(bookingDTO.getBookingInfoDTO().getTotalCost().intValue());
+        createBookingVariables.setChildCount(bookingDTO.getBookingInfoDTO().getChildCount());
+
+        return convertToVariableGraphQLRequest(query, createBookingVariables);
+    }
+
+    public static String injectUpdateAvailabilityQuery(String query, Integer bookingId, Integer availabilityId) {
+        UpdateAvailabilityVariables updateAvailabilityVariables = new UpdateAvailabilityVariables();
+        updateAvailabilityVariables.setAvailabilityId(availabilityId);
+        updateAvailabilityVariables.setBookingId(bookingId);
+
+        return convertToVariableGraphQLRequest(query, updateAvailabilityVariables);
+    }
+
+    public static String injectUpdateBooking(String query, Integer bookingId) {
+        UpdateBookingVariables updateBookingVariables = new UpdateBookingVariables();
+        updateBookingVariables.setBookingId(bookingId);
+
+        return convertToVariableGraphQLRequest(query, updateBookingVariables);
     }
 }
