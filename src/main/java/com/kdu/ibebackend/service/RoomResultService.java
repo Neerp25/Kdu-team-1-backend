@@ -155,19 +155,19 @@ public class RoomResultService {
             }
         }
 
-        for (HashMap.Entry<Integer, HashMap<String, Integer>> entry : roomTypeCountMap.entrySet()) {
-            HashMap<String, Integer> dateCountMap = entry.getValue();
-            Iterator<HashMap.Entry<String, Integer>> iterator = dateCountMap.entrySet().iterator();
-
-            while (iterator.hasNext()) {
-                Map.Entry<String, Integer> dateCountEntry = iterator.next();
-                int count = dateCountEntry.getValue();
-
-                if (count < searchParamDTO.getRooms()) {
-                    iterator.remove();
-                }
-            }
-        }
+//        for (HashMap.Entry<Integer, HashMap<String, Integer>> entry : roomTypeCountMap.entrySet()) {
+//            HashMap<String, Integer> dateCountMap = entry.getValue();
+//            Iterator<HashMap.Entry<String, Integer>> iterator = dateCountMap.entrySet().iterator();
+//
+//            while (iterator.hasNext()) {
+//                Map.Entry<String, Integer> dateCountEntry = iterator.next();
+//                int count = dateCountEntry.getValue();
+//
+//                if (count <= searchParamDTO.getRooms()) {
+//                    iterator.remove();
+//                }
+//            }
+//        }
 
         int difference = DateUtils.calculateDaysBetween(searchParamDTO.getStartDate(), searchParamDTO.getEndDate());
 

@@ -1,6 +1,7 @@
 package com.kdu.ibebackend.service;
 
 import com.kdu.ibebackend.constants.EmailTemplate;
+import com.kdu.ibebackend.constants.Errors;
 import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
 import com.kdu.ibebackend.constants.graphql.GraphQLMutations;
 import com.kdu.ibebackend.dto.graphql.*;
@@ -8,6 +9,7 @@ import com.kdu.ibebackend.dto.request.BookingDTO;
 import com.kdu.ibebackend.dto.response.BookingResponse;
 import com.kdu.ibebackend.dto.response.RoomType;
 import com.kdu.ibebackend.entities.BookingExtensionMapper;
+import com.kdu.ibebackend.exceptions.custom.BookingException;
 import com.kdu.ibebackend.models.dynamodb.RoomInfo;
 import com.kdu.ibebackend.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,13 +29,15 @@ public class BookingService {
     private TableService tableService;
     private DynamoDBService dynamoDBService;
     private EmailService emailService;
+    private PreBookingService preBookingService;
 
     @Autowired
-    public BookingService(GraphQLService graphQLService, TableService tableService, DynamoDBService dynamoDBService, EmailService emailService) {
+    public BookingService(GraphQLService graphQLService, TableService tableService, DynamoDBService dynamoDBService, EmailService emailService, PreBookingService preBookingService) {
         this.graphQLService = graphQLService;
         this.tableService = tableService;
         this.dynamoDBService = dynamoDBService;
         this.emailService = emailService;
+        this.preBookingService = preBookingService;
     }
 
     public static Map<Integer, List<Integer>> getAvailableRooms(List<ListRoomAvailabilityIds.Availability> availabilityData, String startDateStr, String endDateStr) {
@@ -72,7 +78,7 @@ public class BookingService {
         return availableRooms;
     }
 
-    public UUID createFinalBooking(BookingDTO bookingDTO) {
+    public UUID createFinalBooking(BookingDTO bookingDTO) throws BookingException, ParseException {
         String query = GraphQLFetch.roomAvailabilityIds;
         String injectedQuery = GraphUtils.injectRoomAvailabilityIdQuery(query, bookingDTO.getBookingInfoDTO().getCheckInDate(), bookingDTO.getBookingInfoDTO().getCheckOutDate(), bookingDTO.getBookingInfoDTO().getRoomTypeId());
 
@@ -81,16 +87,19 @@ public class BookingService {
 
         Map<Integer, List<Integer>> availableRooms = getAvailableRooms(availabilityList, bookingDTO.getBookingInfoDTO().getCheckInDate(), bookingDTO.getBookingInfoDTO().getCheckOutDate());
 
-        log.info(MapUtils.trimMap(availableRooms, 2).toString());
+        log.info(availableRooms.toString());
+        List<Integer> roomIds = new ArrayList<>(availableRooms.keySet());
+        log.info(roomIds.toString());
 
-        if(availableRooms.size() < bookingDTO.getBookingInfoDTO().getRooms()) {
-            log.info("Invalid Stuff");
-            return null;
+        if (availableRooms.size() < bookingDTO.getBookingInfoDTO().getRooms()) {
+            throw new BookingException(Errors.NO_ROOMS);
         }
+
+        List<Integer> insertedRoomIds = preBookingService.addToPreBookingTable(bookingDTO, roomIds);
 
         Integer guestId = createGuestEntry(bookingDTO);
         Integer bookingId = createBookingEntry(bookingDTO, guestId);
-        updateAvailabilities(MapUtils.trimMap(availableRooms, bookingDTO.getBookingInfoDTO().getRooms()), bookingId);
+        updateAvailabilities(availableRooms, bookingId, insertedRoomIds);
         BookingExtensionMapper res = tableService.saveBookingMapper(bookingDTO, bookingId);
 
         String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
@@ -117,24 +126,23 @@ public class BookingService {
         return createBooking.getRes().getBooking().getBookingId();
     }
 
-    public void updateAvailabilities(Map<Integer, List<Integer>>  availableRooms, Integer bookingId) {
-        for (Map.Entry<Integer, List<Integer>> entry : availableRooms.entrySet()) {
-            Integer roomId = entry.getKey();
-            List<Integer> availabilityIds = entry.getValue();
+    public void updateAvailabilities(Map<Integer, List<Integer>> availableRooms, Integer bookingId, List<Integer> roomIds) {
+        for (Integer roomId : roomIds) {
+            List<Integer> availabilityIds = availableRooms.get(roomId);
 
-            for(Integer availabilityId : availabilityIds) {
+            for (Integer availabilityId : availabilityIds) {
                 String query = GraphQLMutations.updateAvailability;
                 String injectedQuery = GraphUtils.injectUpdateAvailabilityQuery(query, bookingId, availabilityId);
                 UpdateRoomAvailability updateRoomAvailability = graphQLService.executePostRequest(injectedQuery, UpdateRoomAvailability.class).getBody();
                 log.info(updateRoomAvailability.toString());
-
             }
         }
+
     }
 
-    public void deleteBooking(String reservationId) {
+    public void deleteBooking(String reservationId) throws BookingException {
         Optional<BookingExtensionMapper> res = tableService.findBooking(reservationId);
-        if(res.isEmpty()) return;
+        if (res.isEmpty()) throw new BookingException(Errors.NO_BOOKING);
 
         Integer bookingId = res.get().getBookingId();
 
@@ -146,7 +154,7 @@ public class BookingService {
         String injectedAvailabilityQuery = GraphUtils.injectUpdateBooking(availabilityQuery, bookingId);
         ListRoomAvailabilityIds listRoomAvailabilityIds = graphQLService.executePostRequest(injectedAvailabilityQuery, ListRoomAvailabilityIds.class).getBody();
 
-        for(ListRoomAvailabilityIds.Availability availability : listRoomAvailabilityIds.getRes().getAvailabilities()) {
+        for (ListRoomAvailabilityIds.Availability availability : listRoomAvailabilityIds.getRes().getAvailabilities()) {
             String updateQuery = GraphQLMutations.updateAvailability;
             String injectedUpdateQuery = GraphUtils.injectUpdateAvailabilityQuery(updateQuery, 0, availability.getRoomAvailabilityId());
             UpdateRoomAvailability updateRoomAvailability = graphQLService.executePostRequest(injectedUpdateQuery, UpdateRoomAvailability.class).getBody();
@@ -222,7 +230,7 @@ public class BookingService {
         String query = GraphQLFetch.getRoomTypes;
         String formattedQuery = GraphUtils.convertToGraphQLRequest(query);
         ListRoomTypes res = graphQLService.executePostRequest(formattedQuery, ListRoomTypes.class).getBody();
-        return  res.getRes().getRoomTypes();
+        return res.getRes().getRoomTypes();
     }
 
     public String bookingToken(String reservationId) {

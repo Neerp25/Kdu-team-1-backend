@@ -1,19 +1,12 @@
 package com.kdu.ibebackend.controller;
 
 import com.kdu.ibebackend.constants.EmailTemplate;
-import com.kdu.ibebackend.constants.graphql.GraphQLFetch;
-import com.kdu.ibebackend.dto.graphql.ListRoomTypes;
 import com.kdu.ibebackend.dto.request.BookingDTO;
 import com.kdu.ibebackend.dto.response.BookingResponse;
-import com.kdu.ibebackend.dto.response.RoomType;
+import com.kdu.ibebackend.exceptions.custom.BookingException;
 import com.kdu.ibebackend.exceptions.custom.OtpException;
-import com.kdu.ibebackend.service.BookingService;
-import com.kdu.ibebackend.service.EmailService;
-import com.kdu.ibebackend.service.GraphQLService;
-import com.kdu.ibebackend.service.OtpService;
+import com.kdu.ibebackend.service.*;
 import com.kdu.ibebackend.utils.EmailUtils;
-import com.kdu.ibebackend.utils.GraphUtils;
-import com.kdu.ibebackend.utils.OtpUtils;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.text.ParseException;
 import java.util.UUID;
 
 @RestController
@@ -33,13 +26,15 @@ public class ConfirmationPageController {
     private OtpService otpService;
     private BookingService bookingService;
     private GraphQLService graphQLService;
+    private PreBookingService preBookingService;
 
     @Autowired
-    public ConfirmationPageController(EmailService emailService, OtpService otpService, BookingService bookingService, GraphQLService graphQLService) {
+    public ConfirmationPageController(EmailService emailService, OtpService otpService, BookingService bookingService, GraphQLService graphQLService, PreBookingService preBookingService) {
         this.emailService = emailService;
         this.bookingService = bookingService;
         this.otpService = otpService;
         this.graphQLService = graphQLService;
+        this.preBookingService = preBookingService;
     }
 
     @GetMapping("/sendOtp")
@@ -61,14 +56,14 @@ public class ConfirmationPageController {
     }
 
     @PostMapping("/booking")
-    public ResponseEntity<String> booking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<String> booking(@RequestBody BookingDTO bookingDTO) throws BookingException, ParseException {
          log.info(bookingDTO.toString());
          UUID bookingId = bookingService.createFinalBooking(bookingDTO);
          return new ResponseEntity<>(bookingId.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/deleteBooking")
-    public ResponseEntity<String> deleteBooking(@RequestParam String reservationId) {
+    public ResponseEntity<String> deleteBooking(@RequestParam String reservationId) throws BookingException {
         bookingService.deleteBooking(reservationId);
         return new ResponseEntity<>("Booking Cancelled Successfully", HttpStatus.OK);
     }
