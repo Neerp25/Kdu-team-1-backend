@@ -8,6 +8,6 @@ import lombok.Data;
 public class TravellerDTO {
     private String firstName;
     private String lastName;
-    private Integer phone;
+    private String phone;
     private String email;
 }

@@ -25,7 +25,7 @@ public class BookingResponse {
     private Integer total;
     private String firstName;
     private String lastName;
-    private Integer phone;
+    private String phone;
     private String email;
     private String billingFirstName;
     private String billingLastName;
@@ -35,7 +35,7 @@ public class BookingResponse {
     private String city;
     private String state;
     private Integer zipcode;
-    private Integer billingPhone;
+    private String billingPhone;
     private String billingEmail;
     private String transactionId;
     private String imageUrl;

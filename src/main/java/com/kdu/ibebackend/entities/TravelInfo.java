@@ -24,7 +24,7 @@ public class TravelInfo {
     private String lastName;
 
     @Column(name ="phone_number", nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "email", nullable = false)
     private String email;

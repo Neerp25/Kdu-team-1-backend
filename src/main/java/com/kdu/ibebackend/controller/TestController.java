@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 /**
  * A Test Controller that defines test endpoints for consuming in frontend. CORS
  * has been allowed on
@@ -73,5 +75,20 @@ public class TestController {
         }
 
         return graphQLService.executePostRequest(graphQLMutation, GraphQLMutationResponse.class);
+    }
+
+    @GetMapping("/cpu-spike")
+    public String cpuSpike() {
+        Random random = new Random();
+        long limit = 10000000L;
+        for (long i = 0; i < limit; i++) {
+            double randomNumber = random.nextDouble();
+            double squareRoot = Math.sqrt(randomNumber);
+            double sineValue = Math.sin(randomNumber);
+            double cosineValue = Math.cos(randomNumber);
+            double tangentValue = Math.tan(randomNumber);
+            double logValue = Math.log(randomNumber);
+        }
+        return "CPU spike task completed";
     }
 }

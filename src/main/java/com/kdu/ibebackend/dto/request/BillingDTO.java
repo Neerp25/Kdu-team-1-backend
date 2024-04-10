@@ -14,6 +14,6 @@ public class BillingDTO {
     private String city;
     private String state;
     private Integer zipcode;
-    private Integer phone;
+    private String phone;
     private String email;
 }

@@ -5,12 +5,13 @@ import com.kdu.ibebackend.dto.request.BookingDTO;
 import com.kdu.ibebackend.entities.PreBookingTable;
 import com.kdu.ibebackend.exceptions.custom.BookingException;
 import com.kdu.ibebackend.repository.PreBookingTableRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,7 +29,7 @@ public class PreBookingService {
         this.preBookingTableRepository = preBookingTableRepository;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<PreBookingTable> batchInsert(List<PreBookingTable> preBookingTables) {
         return preBookingTableRepository.saveAll(preBookingTables);
     }
@@ -65,9 +66,9 @@ public class PreBookingService {
                 }
 
                 return insertedRoomIds;
-            } catch (JpaSystemException ex) {
+            } catch (DataIntegrityViolationException ex) {
                 log.info(ex.getMessage());
-                if(ex.getMessage().contains("Overlapping dates for room ID")) {
+                if(ex.getMessage().contains("conflicting key value violates exclusion constraint ")) {
                     log.info("Sliding Window");
                     startIndex++;
                 }

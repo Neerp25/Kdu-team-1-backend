@@ -102,8 +102,8 @@ public class BookingService {
         updateAvailabilities(availableRooms, bookingId, insertedRoomIds);
         BookingExtensionMapper res = tableService.saveBookingMapper(bookingDTO, bookingId);
 
-        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
-        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
+//        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
+//        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
 
         return res.getReservationId();
     }

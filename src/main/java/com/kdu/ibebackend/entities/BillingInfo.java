@@ -42,7 +42,7 @@ public class BillingInfo {
     private Integer zip;
 
     @Column(name = "phone_number", nullable = false)
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "email", nullable = false)
     private String email;
