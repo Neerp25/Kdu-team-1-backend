@@ -17,30 +17,31 @@ public class BookingInfoDTO {
     @NotNull(message = ValidationConstants.END_DATE_NOT_NULL_MESSAGE)
     private String checkOutDate;
 
-    @Positive
-    @NotNull
+    @Positive(message = ValidationConstants.ADULT_COUNT_POSITIVE)
+    @NotNull(message = ValidationConstants.ADULT_COUNT_NOT_NULL)
     private Integer adultCount;
 
-    @NotNull
+    @NotNull(message = ValidationConstants.CHILD_COUNT_NOT_NULL)
     private Integer childCount;
 
-    @NotNull
+    @NotNull(message = ValidationConstants.TOTAL_COST_NOT_NULL)
     private Double totalCost;
 
-    @NotNull
+    @NotNull(message = ValidationConstants.AMOUNT_DUE_RESORT_NOT_NULL)
     private Double amountDueResort;
 
-    @NotBlank
-    @Size(min = 2)
+    @NotBlank(message = ValidationConstants.GUEST_NAME_NOT_BLANK)
+    @Size(min = 2, message = ValidationConstants.GUEST_NAME_SIZE)
     private String guestName;
 
-    @NotNull
-    @Positive
+    @Positive(message = ValidationConstants.ROOM_TYPE_ID_POSITIVE)
+    @NotNull(message = ValidationConstants.ROOM_TYPE_ID_NOT_NULL)
     private Integer roomTypeId;
 
-    @NotNull
-    @Positive
+    @Positive(message = ValidationConstants.ROOMS_POSITIVE)
+    @NotNull(message = ValidationConstants.ROOMS_NOT_NULL)
     private Integer rooms;
+
 
     @Nullable
     private Integer promotionId;

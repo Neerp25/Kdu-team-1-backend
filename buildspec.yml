@@ -3,7 +3,7 @@ phases:
   build:
     commands:
       - echo Packaging JAR File
-      - mvn clean install -DskipTests
+      - mvn clean install -DskipTests -Dmaven.test.skip=true
   post_build:
     commands:
       - echo Build complete.

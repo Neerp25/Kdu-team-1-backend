@@ -7,6 +7,7 @@ import com.kdu.ibebackend.exceptions.custom.BookingException;
 import com.kdu.ibebackend.exceptions.custom.OtpException;
 import com.kdu.ibebackend.service.*;
 import com.kdu.ibebackend.utils.EmailUtils;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -41,38 +42,38 @@ public class ConfirmationPageController {
     }
 
     @GetMapping("/sendOtp")
-    public ResponseEntity<String> sendOtp(@RequestParam @NotNull @Email String email) {
+    public ResponseEntity<String> sendOtp(@RequestParam @Valid @NotNull @Email String email) {
         String otp = otpService.sendOtp(email);
         return new ResponseEntity<>(otp, HttpStatus.OK);
     }
 
     @GetMapping("/verifyOtp")
-    public ResponseEntity<String> verifyOtp(@RequestParam @NotNull @Email String email, @RequestParam @NotNull String otp) throws OtpException {
+    public ResponseEntity<String> verifyOtp(@RequestParam @Valid @NotNull @Email String email, @RequestParam @NotNull String otp) throws OtpException {
         String res = otpService.verifyOtp(email, otp);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/verifyBooking")
-    public ResponseEntity<BookingResponse> verifyBooking(@RequestParam String reservationId) {
+    public ResponseEntity<BookingResponse> verifyBooking(@RequestParam @Valid String reservationId) {
         BookingResponse res = bookingService.verifyBooking(reservationId);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping("/booking")
-    public ResponseEntity<String> booking(@RequestBody BookingDTO bookingDTO) throws BookingException, ParseException {
+    public ResponseEntity<String> booking(@RequestBody @Valid BookingDTO bookingDTO) throws BookingException, ParseException {
          log.info(bookingDTO.toString());
          UUID bookingId = bookingService.createFinalBooking(bookingDTO);
          return new ResponseEntity<>(bookingId.toString(), HttpStatus.OK);
     }
 
     @GetMapping("/deleteBooking")
-    public ResponseEntity<String> deleteBooking(@RequestParam String reservationId) throws BookingException {
+    public ResponseEntity<String> deleteBooking(@RequestParam @Valid String reservationId) throws BookingException {
         bookingService.deleteBooking(reservationId);
         return new ResponseEntity<>("Booking Cancelled Successfully", HttpStatus.OK);
     }
 
     @GetMapping("bookingEmail")
-    public ResponseEntity<String> sendMail(@RequestParam String email, @RequestParam String reservationId) {
+    public ResponseEntity<String> sendMail(@RequestParam @Valid @NotNull @Email String email, @RequestParam String reservationId) {
         String templateData = EmailUtils.bookingEmailTemplateGenerator(reservationId);
         emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, email, templateData);
         return new ResponseEntity<>("Email Sent Successfully", HttpStatus.OK);

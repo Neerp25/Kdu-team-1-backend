@@ -29,7 +29,7 @@ public class AuthenticationService {
         String apiKey = request.getHeader(AUTH_TOKEN_HEADER_NAME);
         String AUTH_TOKEN = env.getProperty("auth.token");
         if (apiKey == null || !apiKey.equals(AUTH_TOKEN)) {
-            if (AuthUtils.validateSwaggerDocsPath(request.getRequestURI())) {
+            if (AuthUtils.validateSwaggerDocsPath(request.getRequestURI()) || AuthUtils.validateTestHealthPoint(request.getRequestURI())) {
                 return new ApiKeyAuthentication(AUTH_TOKEN, AuthorityUtils.NO_AUTHORITIES);
             }
 

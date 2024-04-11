@@ -11,19 +11,19 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties
 public class TravellerDTO {
-    @NotBlank
-    @Size(min = 2)
+    @NotBlank(message = ValidationConstants.FIRST_NAME_NOT_BLANK)
+    @Size(min = 2, message = ValidationConstants.FIRST_NAME_SIZE)
     private String firstName;
 
-    @NotBlank
-    @Size(min = 2)
+    @NotBlank(message = ValidationConstants.LAST_NAME_NOT_BLANK)
+    @Size(min = 2, message = ValidationConstants.LAST_NAME_SIZE)
     private String lastName;
 
-    @NotBlank
-    @Pattern(regexp= ValidationConstants.PHONE_FORMAT_REGEX)
+    @NotBlank(message = ValidationConstants.PHONE_NOT_BLANK)
+    @Pattern(regexp = ValidationConstants.PHONE_FORMAT_REGEX, message = ValidationConstants.PHONE_PATTERN)
     private String phone;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = ValidationConstants.EMAIL_NOT_BLANK)
+    @Email(message = ValidationConstants.EMAIL_FORMAT)
     private String email;
 }
