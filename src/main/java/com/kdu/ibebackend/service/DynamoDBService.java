@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 /**
  * Service Layer for interacting with DynamoDB
@@ -55,6 +56,10 @@ public class DynamoDBService {
 
         dynamoRepository.updateRoomInfo(roomInfo);
         dynamoRepository.saveRoomReview(roomReview);
+    }
+
+    public List<RoomReview> findRoomReviewsById(Integer roomId) {
+        return dynamoRepository.findRoomReviews(String.valueOf(roomId));
     }
 
     public boolean checkReview(String email) {

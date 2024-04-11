@@ -7,10 +7,12 @@ import com.kdu.ibebackend.constants.graphql.GraphQLMutations;
 import com.kdu.ibebackend.dto.graphql.*;
 import com.kdu.ibebackend.dto.request.BookingDTO;
 import com.kdu.ibebackend.dto.response.BookingResponse;
+import com.kdu.ibebackend.dto.response.PersonalBooking;
 import com.kdu.ibebackend.dto.response.RoomType;
 import com.kdu.ibebackend.entities.BookingExtensionMapper;
 import com.kdu.ibebackend.exceptions.custom.BookingException;
 import com.kdu.ibebackend.models.dynamodb.RoomInfo;
+import com.kdu.ibebackend.repository.BookingExtensionMapperRepository;
 import com.kdu.ibebackend.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BookingService {
+    private final BookingExtensionMapperRepository bookingExtensionMapperRepository;
     private GraphQLService graphQLService;
     private TableService tableService;
     private DynamoDBService dynamoDBService;
@@ -35,12 +38,14 @@ public class BookingService {
     private PreBookingService preBookingService;
 
     @Autowired
-    public BookingService(GraphQLService graphQLService, TableService tableService, DynamoDBService dynamoDBService, EmailService emailService, PreBookingService preBookingService) {
+    public BookingService(GraphQLService graphQLService, TableService tableService, DynamoDBService dynamoDBService, EmailService emailService, PreBookingService preBookingService,
+                          BookingExtensionMapperRepository bookingExtensionMapperRepository) {
         this.graphQLService = graphQLService;
         this.tableService = tableService;
         this.dynamoDBService = dynamoDBService;
         this.emailService = emailService;
         this.preBookingService = preBookingService;
+        this.bookingExtensionMapperRepository = bookingExtensionMapperRepository;
     }
 
     public static Map<Integer, List<Integer>> getAvailableRooms(List<ListRoomAvailabilityIds.Availability> availabilityData, String startDateStr, String endDateStr) {
@@ -140,7 +145,6 @@ public class BookingService {
                 log.info(updateRoomAvailability.toString());
             }
         }
-
     }
 
     public void deleteBooking(String reservationId) throws BookingException {
@@ -163,6 +167,8 @@ public class BookingService {
             UpdateRoomAvailability updateRoomAvailability = graphQLService.executePostRequest(injectedUpdateQuery, UpdateRoomAvailability.class).getBody();
             log.info(updateRoomAvailability.toString());
         }
+
+        preBookingService.clearPreBookingTable(listRoomAvailabilityIds);
     }
 
     public BookingResponse verifyBooking(String reservationId) {
@@ -238,5 +244,34 @@ public class BookingService {
 
     public String bookingToken(String reservationId) {
         return JwtUtils.generateBookingToken(reservationId);
+    }
+
+    public List<PersonalBooking> fetchBookings(String email) {
+        List<BookingExtensionMapper> bookingExtensionMappers = bookingExtensionMapperRepository.findByTravelInfo_EmailEquals(email);
+
+        List<PersonalBooking> bookings = new ArrayList<>();
+
+        for(BookingExtensionMapper booking : bookingExtensionMappers) {
+            String query = GraphQLFetch.getBookingStatus;
+            String injectedQuery = GraphUtils.injectUpdateBooking(query, booking.getBookingId());
+            BookingStatus bookingStatus = graphQLService.executePostRequest(injectedQuery, BookingStatus.class).getBody();
+
+            PersonalBooking personalBooking = new PersonalBooking();
+            personalBooking.setAdultCount(bookingStatus.getRes().getGetBooking().getAdultCount());
+            personalBooking.setChildCount(bookingStatus.getRes().getGetBooking().getChildCount());
+            personalBooking.setTotalCost(bookingStatus.getRes().getGetBooking().getTotalCost());
+            personalBooking.setCheckInDate(bookingStatus.getRes().getGetBooking().getCheckInDate());
+            personalBooking.setCheckOutDate(bookingStatus.getRes().getGetBooking().getCheckOutDate());
+
+            if (bookingStatus.getRes().getGetBooking().getStatusId() == 1) {
+                personalBooking.setStatus(false);
+            } else if (bookingStatus.getRes().getGetBooking().getStatusId() == 2) {
+                personalBooking.setStatus(true);
+            }
+
+            bookings.add(personalBooking);
+        }
+
+        return bookings;
     }
 }

@@ -1,6 +1,7 @@
 package com.kdu.ibebackend.service;
 
 import com.kdu.ibebackend.constants.Errors;
+import com.kdu.ibebackend.dto.graphql.ListRoomAvailabilityIds;
 import com.kdu.ibebackend.dto.request.BookingDTO;
 import com.kdu.ibebackend.entities.PreBookingTable;
 import com.kdu.ibebackend.exceptions.custom.BookingException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -87,5 +89,15 @@ public class PreBookingService {
         }
 
         return new ArrayList<>();
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void clearPreBookingTable(ListRoomAvailabilityIds listRoomAvailabilityIds) {
+        Collection<Integer> roomIds = listRoomAvailabilityIds.getRes().getAvailabilities().stream()
+                .map(ListRoomAvailabilityIds.Availability::getRoomId)
+                .toList();
+
+        Long deleteCount = preBookingTableRepository.deleteByRoomIdInAllIgnoreCase(roomIds);
+        log.info(String.valueOf(deleteCount));
     }
 }

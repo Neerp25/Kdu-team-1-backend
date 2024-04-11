@@ -13,17 +13,15 @@ import ch.qos.logback.core.LayoutBase;
 public class LoggerLayout extends LayoutBase<ILoggingEvent> {
 
     public String doLayout(ILoggingEvent event) {
-        StringBuilder sbuf = new StringBuilder(128);
-        sbuf.append(event.getTimeStamp());
-        sbuf.append(" ");
-        sbuf.append(event.getLevel());
-        sbuf.append(" [");
-        sbuf.append(event.getThreadName());
-        sbuf.append("] ");
-        sbuf.append(event.getLoggerName());
-        sbuf.append(" - ");
-        sbuf.append(event.getFormattedMessage());
-        sbuf.append("\n");
-        return sbuf.toString();
+        return event.getTimeStamp() +
+                " " +
+                event.getLevel() +
+                " [" +
+                event.getThreadName() +
+                "] " +
+                event.getLoggerName() +
+                " - " +
+                event.getFormattedMessage() +
+                "\n";
     }
 }

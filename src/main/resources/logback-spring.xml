@@ -13,6 +13,13 @@
         </encoder>
     </appender>
 
+    <appender name="CLOUDWATCH" class="com.kdu.ibebackend.logging.CloudWatchAppender">
+        <!-- Info level logs sent to Cloudwatch -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
     <appender name="FILE-OUT" class="ch.qos.logback.core.FileAppender">
         <!--Allowing only ERROR logs to the logs/app.log files-->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -28,8 +35,9 @@
     </appender>
 
     <root level="DEBUG">
-        <!--Logs sent to both Console and File -->
+        <!--Logs sent to Console, File and Cloudwatch -->
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-OUT"/>
+<!--        <appender-ref ref="CLOUDWATCH" />-->
     </root>
 </configuration>

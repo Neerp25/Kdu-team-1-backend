@@ -4,8 +4,6 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.QueryRequest;
-import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdu.ibebackend.constants.Constants;
@@ -74,6 +72,21 @@ public class DynamoRepository {
         List<RoomReview> reviews = dynamoDBMapper.query(RoomReview.class, queryExpression);
 
         return !reviews.isEmpty();
+    }
+
+    public List<RoomReview> findRoomReviews(String roomId) {
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":key", new AttributeValue().withN(roomId));
+
+        DynamoDBQueryExpression<RoomReview> queryExpression = new DynamoDBQueryExpression<RoomReview>()
+                .withIndexName(Constants.ROOM_REVIEW_ID_SECONDARY_INDEX)
+                .withKeyConditionExpression("room_type_id = :key")
+                .withExpressionAttributeValues(eav)
+                .withConsistentRead(false);
+
+        List<RoomReview> reviews = dynamoDBMapper.query(RoomReview.class, queryExpression);
+
+        return reviews;
     }
 
     public void saveOtpEntry(OtpEntry otpEntry) {
