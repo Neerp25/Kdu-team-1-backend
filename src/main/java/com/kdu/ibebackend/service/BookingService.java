@@ -22,6 +22,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service to execute to all booking related functions along with Concurrency
+ */
 @Service
 @Slf4j
 public class BookingService {

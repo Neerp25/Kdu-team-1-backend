@@ -1,7 +1,5 @@
 package com.kdu.ibebackend.service;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.kdu.ibebackend.constants.Constants;
 import com.kdu.ibebackend.constants.EmailTemplate;
 import com.kdu.ibebackend.constants.Errors;

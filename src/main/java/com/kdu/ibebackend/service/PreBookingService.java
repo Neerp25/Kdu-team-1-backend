@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service to interact with the pre_booking_table and handle concurrency of bookings
+ */
 @Service
 @Slf4j
 public class PreBookingService {

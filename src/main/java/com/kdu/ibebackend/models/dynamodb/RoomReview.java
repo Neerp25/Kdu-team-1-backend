@@ -5,6 +5,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.Data;
 
+/**
+ * Model for RoomReview Table in DynamoDB
+ */
+
 @Data
 @DynamoDBTable(tableName = "kdu-team1-ibe-roomreviews")
 public class RoomReview {

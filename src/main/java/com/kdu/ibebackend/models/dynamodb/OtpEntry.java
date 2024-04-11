@@ -2,10 +2,12 @@ package com.kdu.ibebackend.models.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.Data;
 
+/**
+ * Model for OTP Table in DynamoDB
+ */
 @Data
 @DynamoDBTable(tableName = "kdu-team1-ibe-otpholder")
 public class OtpEntry {

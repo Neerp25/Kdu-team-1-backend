@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * Service to fetch data for the room details page
+ * Service to fetch filtered data for the room details page
  */
 @Service
 @Slf4j

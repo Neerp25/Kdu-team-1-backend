@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.sql.Date;
 
+/**
+ * Table to store custom promo codes for the site
+ */
+
 @Getter
 @Setter
 @Entity

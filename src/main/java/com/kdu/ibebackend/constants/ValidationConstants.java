@@ -5,6 +5,7 @@ package com.kdu.ibebackend.constants;
  */
 public class ValidationConstants {
     public static final String DATE_FORMAT_REGEX = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z";
+    public static final String PHONE_FORMAT_REGEX = "\\d{10}";
     public static final String DATE_FORMAT_MESSAGE = "Date should be in yyyy-MM-dd'T'HH:mm:ss.SSS'Z' format";
     public static final String START_DATE_NOT_NULL_MESSAGE = "Start date cannot be null";
     public static final String END_DATE_NOT_NULL_MESSAGE = "End date cannot be null";

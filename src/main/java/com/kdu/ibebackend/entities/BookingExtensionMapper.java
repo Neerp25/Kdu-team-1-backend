@@ -8,7 +8,7 @@ import java.util.UUID;
 
 /**
  * Table to map the booking_id of the provided GraphQL schema with travel info and billing info
- * defined by us. Also contains transaction id
+ * defined by us. Also contains transaction_id
  */
 @Getter
 @Setter

@@ -7,6 +7,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Model for RoomInfo Table in DynamoDB
+ */
+
 @Data
 @DynamoDBTable(tableName = "kdu-team1-ibe-roomtypeinfo")
 public class RoomInfo {

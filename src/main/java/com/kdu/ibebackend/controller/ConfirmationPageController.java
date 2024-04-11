@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.util.UUID;
 
+/**
+ * All APIs defined for Booking flow
+ */
 @RestController
 @RequestMapping(path = "/api/v1")
 @Slf4j

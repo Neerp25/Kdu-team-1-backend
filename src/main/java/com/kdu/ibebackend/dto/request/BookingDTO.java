@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+/**
+ * Validated DTO for getting details for creating a booking
+ */
 @Data
 @JsonIgnoreProperties
 public class BookingDTO {

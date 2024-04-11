@@ -16,6 +16,9 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service to handle interactions with custom tables definde by us
+ */
 @Service
 public class TableService {
     private final BillingInfoRepository billingInfoRepository;

@@ -7,8 +7,6 @@ import java.util.List;
  */
 public class AuthConstants {
     public static String AUTH_TOKEN_HEADER = "X-Api-Key";
-    public static String AUTH_TOKEN = "AXydZlI2gmTmB/XSX/r4UQncEU+O3ZjPtolBcMKYpvc=";
-
     public static List<String> WhiteListURLs = List.of(
             "http://kdu-team1-frontend.s3-website.ap-south-1.amazonaws.com",
             "http://localhost:4173",

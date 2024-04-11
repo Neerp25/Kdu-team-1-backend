@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Table to store transaction info of the user
+ */
 @Getter
 @Setter
 @Entity

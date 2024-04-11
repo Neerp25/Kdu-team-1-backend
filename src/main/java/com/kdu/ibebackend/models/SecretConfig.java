@@ -16,4 +16,13 @@ public class SecretConfig {
 
     @JsonProperty("currency.api.key")
     private String currencyApiKey;
+
+    @JsonProperty("db.url")
+    private String dbUrl;
+
+    @JsonProperty("db.username")
+    private String dbUsername;
+
+    @JsonProperty("db.password")
+    private String dbPassword;
 }
