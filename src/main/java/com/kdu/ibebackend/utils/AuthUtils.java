@@ -7,4 +7,9 @@ public class AuthUtils {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         return pathMatcher.match("/swagger-ui/**", URI) || pathMatcher.match("/v3/api-docs/**", URI) || pathMatcher.match("/swagger-ui.html", URI) || pathMatcher.match("/webjars/swagger-ui/**", URI);
     }
+
+    public static Boolean validateTestHealthPoint(String URI) {
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        return pathMatcher.match("/test", URI);
+    }
 }

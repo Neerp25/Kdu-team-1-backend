@@ -39,10 +39,7 @@ public class TestController {
     }
 
 
-    @Operation(summary = "Test Working Server",
-            parameters = {
-                    @Parameter(name = "X-Api-Key", description = "API Key", required = true, in = ParameterIn.HEADER)
-            })
+    @Operation(summary = "Test Working Server")
     @GetMapping("/test")
     public String testHealthEndpoint() {
         return Constants.SERVER_SUCCESS;
@@ -53,28 +50,6 @@ public class TestController {
     public ResponseEntity<GraphQLResponse> testGraphQL() {
         String graphqlQuery = GraphUtils.convertToGraphQLRequest(GraphQLFetch.testQuery);
         return graphQLService.executePostRequest(graphqlQuery, GraphQLResponse.class);
-    }
-
-    /**
-     * A test endpoint to look at multi-threading and concurrent mutations in GraphQL and PostgresSQL
-     * @param name
-     * @return
-     */
-    @GetMapping("/concurrency_test")
-    public ResponseEntity<GraphQLMutationResponse> testMutation(@RequestParam String name) {
-        GraphQLMutationVariables graphQLMutationVariables = new GraphQLMutationVariables();
-        graphQLMutationVariables.setGuestName(name);
-
-        String graphQLMutation = GraphUtils.convertToVariableGraphQLRequest(GraphQLMutations.dummyMutation, graphQLMutationVariables);
-
-        log.info(Thread.currentThread().getName());
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return graphQLService.executePostRequest(graphQLMutation, GraphQLMutationResponse.class);
     }
 
     @GetMapping("/cpu-spike")
