@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
@@ -40,4 +41,10 @@ public class BookingExtensionMapper {
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "transaction_id", referencedColumnName = "id")
     private TransactionInfo transactionInfo;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Timestamp createdAt;
+    public BookingExtensionMapper() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 }
