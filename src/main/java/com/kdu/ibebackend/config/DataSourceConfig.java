@@ -24,7 +24,7 @@ public class DataSourceConfig {
         ObjectMapper mapper = new ObjectMapper();
         secretConfig = mapper.readValue(awsSecret, SecretConfig.class);
     }
-    
+
     @Bean
     public DataSource getDataSource() {
         DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
