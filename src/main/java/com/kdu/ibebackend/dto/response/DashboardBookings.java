@@ -11,4 +11,5 @@ public class DashboardBookings {
     private String name;
     private String email;
     private Double bookingAmount;
+    private Boolean cancelled;
 }

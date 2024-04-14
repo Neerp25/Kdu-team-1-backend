@@ -37,4 +37,13 @@ public class JwtUtils {
 
         return Jwts.builder().subject("bookingdata").claims(claims).issuedAt(now).signWith(getSignKey(), Jwts.SIG.HS256).compact();
     }
+
+    public static String generateTenantToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+
+        Date now = new Date();
+
+        return Jwts.builder().subject("tenant").claims(claims).issuedAt(now).signWith(getSignKey(), Jwts.SIG.HS256).compact();
+    }
 }

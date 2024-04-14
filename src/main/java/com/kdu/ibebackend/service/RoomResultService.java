@@ -32,7 +32,7 @@ public class RoomResultService {
     private final DynamoDBService dynamoDBService;
     private final PromotionService promotionService;
 
-    private HashMap<Integer, RoomType> roomTypeDetails = new HashMap<>();
+    public static HashMap<Integer, RoomType> roomTypeDetails = new HashMap<>();
 
     @Autowired
     public RoomResultService(GraphQLService graphQLService, DynamoDBService dynamoDBService, PromotionService promotionService) {
@@ -154,6 +154,8 @@ public class RoomResultService {
                 dateCountMap.put(date, dateCountMap.getOrDefault(date, 0) + 1);
             }
         }
+
+        log.info(roomTypeDetails.toString());
 
 //        for (HashMap.Entry<Integer, HashMap<String, Integer>> entry : roomTypeCountMap.entrySet()) {
 //            HashMap<String, Integer> dateCountMap = entry.getValue();

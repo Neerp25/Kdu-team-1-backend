@@ -1,9 +1,6 @@
 package com.kdu.ibebackend.exceptions;
 
-import com.kdu.ibebackend.exceptions.custom.BookingException;
-import com.kdu.ibebackend.exceptions.custom.InvalidPromoException;
-import com.kdu.ibebackend.exceptions.custom.OtpException;
-import com.kdu.ibebackend.exceptions.custom.ValidParamException;
+import com.kdu.ibebackend.exceptions.custom.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +48,13 @@ public class ApiException {
         log.error(e.getMessage());
         log.error(e.getClass().toGenericString());
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidTenantCreds.class})
+    public ResponseEntity<String> tenantError(Exception e) {
+        log.error(e.getMessage());
+        log.error(e.getClass().toGenericString());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({Exception.class})

@@ -110,8 +110,8 @@ public class BookingService {
         updateAvailabilities(availableRooms, bookingId, insertedRoomIds);
         BookingExtensionMapper res = tableService.saveBookingMapper(bookingDTO, bookingId);
 
-//        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
-//        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
+        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
+        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
 
         return res.getReservationId();
     }
@@ -250,6 +250,8 @@ public class BookingService {
         List<BookingExtensionMapper> bookingExtensionMappers = bookingExtensionMapperRepository.findByTravelInfo_EmailEquals(email);
 
         List<PersonalBooking> bookings = new ArrayList<>();
+        List<RoomInfo> roomInfoList = RoomUtils.findRoomInfo(dynamoDBService);
+        List<RoomType> roomTypeInfo = getRoomTypes();
 
         for(BookingExtensionMapper booking : bookingExtensionMappers) {
             String query = GraphQLFetch.getBookingStatus;
@@ -262,6 +264,9 @@ public class BookingService {
             personalBooking.setTotalCost(bookingStatus.getRes().getGetBooking().getTotalCost());
             personalBooking.setCheckInDate(bookingStatus.getRes().getGetBooking().getCheckInDate());
             personalBooking.setCheckOutDate(bookingStatus.getRes().getGetBooking().getCheckOutDate());
+            personalBooking.setReservationId(booking.getReservationId().toString());
+            personalBooking.setImages(roomInfoList.get(booking.getRoomTypeId() - 1).getLowResImages());
+            personalBooking.setRoomTypeName(roomTypeInfo.get(booking.getRoomTypeId() - 1).getRoomTypeName());
 
             if (bookingStatus.getRes().getGetBooking().getStatusId() == 1) {
                 personalBooking.setStatus(false);
