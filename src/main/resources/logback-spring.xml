@@ -38,6 +38,6 @@
         <!--Logs sent to Console, File and Cloudwatch -->
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-OUT"/>
-<!--        <appender-ref ref="CLOUDWATCH" />-->
+        <appender-ref ref="CLOUDWATCH" />
     </root>
 </configuration>
