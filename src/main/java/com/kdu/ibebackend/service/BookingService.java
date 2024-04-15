@@ -36,16 +36,18 @@ public class BookingService {
     private DynamoDBService dynamoDBService;
     private EmailService emailService;
     private PreBookingService preBookingService;
+    private RoomReviewService roomReviewService;
 
     @Autowired
     public BookingService(GraphQLService graphQLService, TableService tableService, DynamoDBService dynamoDBService, EmailService emailService, PreBookingService preBookingService,
-                          BookingExtensionMapperRepository bookingExtensionMapperRepository) {
+                          BookingExtensionMapperRepository bookingExtensionMapperRepository, RoomReviewService roomReviewService) {
         this.graphQLService = graphQLService;
         this.tableService = tableService;
         this.dynamoDBService = dynamoDBService;
         this.emailService = emailService;
         this.preBookingService = preBookingService;
         this.bookingExtensionMapperRepository = bookingExtensionMapperRepository;
+        this.roomReviewService = roomReviewService;
     }
 
     public static Map<Integer, List<Integer>> getAvailableRooms(List<ListRoomAvailabilityIds.Availability> availabilityData, String startDateStr, String endDateStr) {
@@ -110,8 +112,9 @@ public class BookingService {
         updateAvailabilities(availableRooms, bookingId, insertedRoomIds);
         BookingExtensionMapper res = tableService.saveBookingMapper(bookingDTO, bookingId);
 
-//        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
-//        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
+        String templateData = EmailUtils.bookingEmailTemplateGenerator(res.getReservationId().toString());
+        emailService.sendTemplatedEmail(EmailTemplate.BOOKING_TEMPLATE_NAME, bookingDTO.getBillingDTO().getEmail(), templateData);
+        roomReviewService.sendEmail(bookingDTO.getBillingDTO().getEmail(), bookingDTO.getBookingInfoDTO().getRoomTypeId());
 
         return res.getReservationId();
     }

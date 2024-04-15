@@ -1,6 +1,5 @@
 package com.kdu.ibebackend.utils;
 
-import com.kdu.ibebackend.dto.response.BookingResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
